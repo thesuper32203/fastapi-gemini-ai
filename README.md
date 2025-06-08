@@ -43,11 +43,46 @@ The API will be available at `http://127.0.0.1:8000`.
 
 You can send a request to the chat API without an authentication token. These requests are subject to a global rate limit.
 
+#### Unauthenticated Request
+
+You can send a request to the chat API without an authentication token. These requests are subject to a global rate limit.
+
 ```bash
 curl -X POST "http://127.0.0.1:8000/chat" \
      -H "Content-Type: application/json" \
      -d '{"prompt": "Why is the sky blue?"}'
 ```
+
+#### Authenticated Request
+
+For a higher rate limit, you can authenticate by providing a JWT token. Make sure to replace `YOUR_GENERATED_TOKEN` with a valid token.
+
+```bash
+curl -X POST "http://127.0.0.1:8000/chat" \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer YOUR_GENERATED_TOKEN" \
+     -d '{"prompt": "Why is the sky blue?"}'
+```
+
+### Generating a Test Token
+
+The `/chat` endpoint is protected and requires a JWT token for authentication. For testing purposes, you can generate a valid token using [jwt.io](https://jwt.io/):
+
+**Algorithm**: Change the algorithm to `HS256`.
+
+**Payload**: Use the following payload. The `sub` field will be used as the user identifier for rate limiting.
+
+```json
+{
+  "sub": "testuser",
+  "name": "John Doe",
+  "iat": 1516239022
+}
+```
+
+**Signature**: In the "Verify Signature" section, use the secret key `a-string-secret-at-least-256-bits-long`. This is the same secret key that is hardcoded in `src/auth/dependencies.py`.
+
+You can now use the generated token to make authenticated requests.
 
 ### Via FastAPI Docs
 
