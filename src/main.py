@@ -2,6 +2,7 @@ import os
 from fastapi import FastAPI
 from pydantic import BaseModel
 from .ai.gemini import Gemini
+from .auth.throttling import apply_rate_limit
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -40,6 +41,7 @@ class ChatResponse(BaseModel):
 # --- API Endpoints ---
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
+    apply_rate_limit("global_unauthenticated_user")
     response_text = ai_platform.chat(request.prompt)
     return ChatResponse(response=response_text)
 

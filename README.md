@@ -39,9 +39,9 @@ uvicorn src.main:app --reload
 
 The API will be available at `http://127.0.0.1:8000`.
 
-### Via `curl`
+### Making Requests
 
-You can send a request to the chat API using `curl`:
+You can send a request to the chat API without an authentication token. These requests are subject to a global rate limit.
 
 ```bash
 curl -X POST "http://127.0.0.1:8000/chat" \
@@ -59,6 +59,15 @@ Once the server is running, go to [http://127.0.0.1:8000/docs](http://127.0.0.1:
 
 You can configure the system prompt by editing the `src/prompts/system_prompt.md` file.
 
+### Rate Limiting
+
+The API implements rate limiting to prevent abuse. You can modify these limits by changing the constants in `src/auth/throttling.py`:
+
+```python
+GLOBAL_RATE_LIMIT = 3
+GLOBAL_TIME_WINDOW_SECONDS = 60
+```
+
 ## Architecture
 
 The project is structured to be modular, allowing for different AI platforms to be used.
@@ -67,5 +76,7 @@ The project is structured to be modular, allowing for different AI platforms to 
 - `src/ai/base.py`: Defines the `AIPlatform` interface.
 - `src/ai/gemini.py`: The implementation of the `AIPlatform` interface for Gemini.
 - `src/prompts/system_prompt.md`: The system prompt for the AI.
+- `src/auth/dependencies.py`: Handles JWT decoding and user identification.
+- `src/auth/throttling.py`: Provides a simple in-memory rate limiter with different limits for authenticated and unauthenticated users.
 
 To use a different AI, you would create a new class that inherits from `AIPlatform` and implement the `chat` method. Then, you would update `src/main.py` to use your new AI class.
