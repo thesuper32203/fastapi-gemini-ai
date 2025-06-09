@@ -4,9 +4,7 @@ from pydantic import BaseModel
 from .ai.gemini import Gemini
 from .auth.dependencies import get_user_identifier
 from .auth.throttling import apply_rate_limit
-from dotenv import load_dotenv
 
-load_dotenv()
 
 # --- App Initialization ---
 app = FastAPI()
